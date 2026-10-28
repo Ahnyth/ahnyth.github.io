@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kontakt / Contact – Neonmoor Games</title>
+<meta name="description" content="">
+<style>
+  :root { --bg: #100d26; --card: #1c1840; --ink: #f4f1ff; --muted: #b3acd9; --accent: #ffd36b; --line: #2d2766; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.65 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  main { max-width: 720px; margin: 0 auto; padding: 48px 20px 72px; }
+  nav { display: flex; gap: 10px; margin-bottom: 28px; flex-wrap: wrap; }
+  nav a, .pill { color: var(--ink); background: var(--card); border: 1px solid var(--line); border-radius: 999px; padding: 6px 14px;
+          text-decoration: none; font-size: 14px; }
+  h1 { font-size: 30px; line-height: 1.25; margin: 0 0 6px; }
+  h2 { font-size: 20px; margin: 30px 0 6px; }
+  h3 { font-size: 17px; margin: 22px 0 6px; }
+  p { margin: 0 0 12px; overflow-wrap: anywhere; }
+  ul, ol { margin: 0 0 12px; padding-left: 22px; }
+  li { margin: 0 0 6px; }
+  a { color: var(--accent); }
+  section + section { margin-top: 64px; padding-top: 40px; border-top: 1px solid var(--line); }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 20px; padding: 20px 22px; margin: 0 0 16px; }
+  .muted { color: var(--muted); }
+  footer { margin-top: 56px; color: var(--muted); font-size: 14px; }
+  label { display: block; margin: 14px 0 4px; }
+  input, textarea { width: 100%; padding: 10px 12px; border-radius: 12px; border: 1px solid var(--line); background: #0b0920; color: var(--ink);
+          font: inherit; }
+  textarea { min-height: 160px; resize: vertical; }
+  button { margin-top: 16px; padding: 10px 22px; border: 0; border-radius: 999px; background: var(--accent); color: #1a1430; font: inherit;
+          font-weight: 600; cursor: pointer; }
+  button:disabled { opacity: 0.5; cursor: default; }
+  .hidden { position: absolute; left: -5000px; }
+</style>
+</head>
+<body>
+<main>
+<nav><a href="/">← Start</a></nav>
+<h1>Kontakt <span class="muted">/ Contact</span></h1>
+<p>Neonmoor Games · Salvatore Deniz Bulla. Schreib uns hier oder per E-Mail an gfgnp2w@gmail.com. <span class="muted">Write to us here or by email.</span></p>
+<form id="form" class="card" action="https://api.web3forms.com/submit" method="POST">
+  <input type="hidden" name="access_key" value="WEB3FORMS_ACCESS_KEY">
+  <input type="hidden" name="subject" value="Kontaktformular ahnyth.github.io">
+  <input type="checkbox" name="botcheck" class="hidden" tabindex="-1" autocomplete="off" aria-hidden="true">
+  <label for="name">Name</label>
+  <input id="name" name="name" required maxlength="120" autocomplete="name">
+  <label for="email">E-Mail</label>
+  <input id="email" name="email" type="email" required maxlength="200" autocomplete="email">
+  <label for="message">Nachricht / Message</label>
+  <textarea id="message" name="message" required maxlength="5000"></textarea>
+  <p class="muted" style="margin-top:12px">Deine Angaben gehen über Web3Forms per E-Mail an uns; mehr dazu im <a href="/privacy/">Datenschutz dieser Webseite</a>.
+  <br>Your details reach us by email through Web3Forms; see the <a href="/privacy/">website privacy notice</a>.</p>
+  <button id="send" type="submit">Senden / Send</button>
+  <p id="state" role="status" aria-live="polite" style="margin-top:12px"></p>
+</form>
+<script>
+(function () {
+  var form = document.getElementById("form"), state = document.getElementById("state"), send = document.getElementById("send");
+  if (form.access_key.value === "WEB3FORMS_ACCESS_KEY") {
+    // The form's key is not set yet (#193): say so and offer the email instead of a button that cannot send.
+    send.disabled = true;
+    state.innerHTML = 'Das Formular wird gerade eingerichtet. Bis dahin: <a href="mailto:gfgnp2w@gmail.com">gfgnp2w@gmail.com</a>.';
+    return;
+  }
+  form.addEventListener("submit", function (event) {
+    event.preventDefault();
+    send.disabled = true;
+    state.textContent = "Wird gesendet … / Sending …";
+    fetch(form.action, { method: "POST", headers: { "Content-Type": "application/json", Accept: "application/json" },
+      body: JSON.stringify(Object.fromEntries(new FormData(form))) })
+      .then(function (r) { return r.json(); })
+      .then(function (answer) {
+        if (answer.success) { form.reset(); state.textContent = "Danke! Wir melden uns. / Thank you, we will answer."; }
+        else { state.textContent = "Das hat nicht geklappt. Bitte schreib an gfgnp2w@gmail.com. / That failed; please email us."; }
+      })
+      .catch(function () { state.textContent = "Keine Verbindung. Bitte schreib an gfgnp2w@gmail.com. / No connection; please email us."; })
+      .then(function () { send.disabled = false; });
+  });
+})();
+</script>
+<footer><a href="/impressum/">Impressum</a> · <a href="/privacy/">Datenschutz dieser Webseite / Website privacy</a> · <a href="/contact/">Kontakt / Contact</a> · <a href="/">ahnyth.github.io</a></footer>
+</main>
+</body>
+</html>
